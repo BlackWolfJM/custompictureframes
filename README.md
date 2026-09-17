@@ -23,21 +23,6 @@ Permitir que los jugadores personalicen sus construcciones con fotografías, ilu
 
 El enlace de descarga directa se añadirá cuando se publique **`custompictureframes-2.0.0.jar`** en GitHub Releases.
 
-## Publicar en GitHub
-
-Crea un repositorio vacío en GitHub. Desde la carpeta del proyecto, ejecuta los siguientes comandos sustituyendo `TU_USUARIO` por tu usuario y ajustando el nombre del repositorio si es necesario:
-
-```powershell
-git add .
-git commit -m "Initial release: Custom Picture Frames 2.0.0"
-git remote add origin https://github.com/TU_USUARIO/custompictureframes.git
-git push -u origin main
-```
-
-Después de compilar, crea una Release con la etiqueta `v2.0.0` y adjunta `build/libs/custompictureframes-2.0.0.jar` como archivo descargable. Actualiza la sección Descargar con el enlace del archivo publicado.
-
-El archivo `.gitignore` excluye las compilaciones, cachés, registros y mundos de desarrollo. Conserva el Gradle Wrapper, incluido `gradle/wrapper/gradle-wrapper.jar`, para que otros puedan compilar el proyecto.
-
 ## Requisitos e instalación
 
 - Minecraft Java Edition **1.21.1**.
