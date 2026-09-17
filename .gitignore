@@ -1,0 +1,28 @@
+.gradle/
+build/
+run/
+run-1.21.1/
+.idea/
+*.iml
+
+# Minecraft development data and local images
+/logs/
+/crash-reports/
+/screenshots/
+/saves/
+*.log
+hs_err_pid*
+
+# Local editor and agent settings
+/.vscode/
+/.codex/
+/.agents/
+.DS_Store
+Thumbs.db
+
+# Private local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key

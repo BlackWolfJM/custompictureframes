@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "id": "custompictureframes_tests",
+  "version": "1.0.0",
+  "name": "Custom paintings integration tests",
+  "environment": "*",
+  "entrypoints": { "fabric-gametest": ["com.example.custompictureframes.PaintingGameTests"] }
+}

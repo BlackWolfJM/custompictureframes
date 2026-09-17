@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "custompictureframes",
+  "version": "${version}",
+  "name": "Custom Picture Frames",
+  "description": "Local photographs as persistent, multiplayer custom paintings.",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.example.custompictureframes.CustomPictureFramesMod"],
+    "client": ["com.example.custompictureframes.client.CustomPictureFramesClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  }
+}

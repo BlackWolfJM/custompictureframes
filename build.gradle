@@ -1,0 +1,70 @@
+plugins {
+    id 'fabric-loom' version '1.7.4'
+    id 'maven-publish'
+}
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+repositories { mavenCentral() }
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.google.code.gson:gson:2.10.1'
+}
+loom {
+    splitEnvironmentSourceSets()
+    runs { client { runDir 'run-1.21.1' } }
+    mods {
+        custompictureframes {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand version: project.version }
+}
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    withSourcesJar()
+}
+test { useJUnitPlatform(); systemProperty 'java.awt.headless', 'true' }
+sourceSets.test.compileClasspath += sourceSets.client.output + sourceSets.client.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.client.output + sourceSets.client.runtimeClasspath
+publishing { publications { mavenJava(MavenPublication) { from components.java } } }
+
+tasks.named('jar') {
+    from('LICENSE') { rename { 'LICENSE_custompictureframes' } }
+}
+
+// Opt-in integration tests run in a separate headless Minecraft world, never in user saves.
+if (project.hasProperty('gameTests')) {
+    sourceSets {
+        gametest {
+            compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+            runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+        }
+    }
+    loom {
+        mods { custompictureframes_tests { sourceSet sourceSets.gametest } }
+        runs {
+            gameTest {
+                server()
+                name 'Painting integration tests'
+                source sourceSets.gametest
+                vmArg '-Dfabric-api.gametest'
+                vmArg '-Dfabric-api.gametest.report-file=reports/results.xml'
+                runDir 'build/gametest'
+            }
+        }
+    }
+}

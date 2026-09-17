@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        // Repositorios donde se encuentra el plugin fabric-loom
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'custompictureframes' // Ajusta este nombre al de tu proyecto
