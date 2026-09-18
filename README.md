@@ -22,9 +22,11 @@ Permitir que los jugadores personalicen sus construcciones con fotografías, ilu
 
 ## Descargar
 
-Las versiones publicadas estarán disponibles en [GitHub Releases](https://github.com/BlackWolfJM/custompictureframes/releases).
+[**Descargar Custom Picture Frames 2.0.0 (.jar)**](https://github.com/BlackWolfJM/custompictureframes/raw/refs/heads/main/downloads/custompictureframes-2.0.0.jar)
 
-Descarga el archivo **`custompictureframes-2.0.0.jar`** adjunto a la versión. Si aún no hay una versión publicada, puedes compilar el proyecto siguiendo las instrucciones de este README.
+Para Minecraft Java Edition **1.21.1**, con **Fabric** y **Fabric API**. Incluye el giro de imágenes en el editor.
+
+Coloca el archivo descargado en la carpeta mods de tu instalación.
 
 ## Requisitos e instalación
 
