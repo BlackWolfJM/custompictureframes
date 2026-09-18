@@ -26,3 +26,6 @@ Thumbs.db
 !.env.example
 *.pem
 *.key
+
+# Compiled output from IDEs
+/bin/

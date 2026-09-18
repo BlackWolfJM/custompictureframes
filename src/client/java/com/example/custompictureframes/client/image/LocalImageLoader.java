@@ -28,11 +28,17 @@ public final class LocalImageLoader {
             } finally { reader.dispose(); }
         }
         image = ImagePipeline.resize(image, Limits.SOURCE_SIDE);
+        return encode(image, path.getFileName().toString());
+    }
+    public static Loaded rotateClockwise(Loaded source) throws IOException {
+        return encode(ImagePipeline.rotateClockwise(source.image()), source.name());
+    }
+    private static Loaded encode(BufferedImage image, String name) throws IOException {
         byte[] png = ImagePipeline.png(image);
         while (png.length > Limits.MAX_BYTES) {
             image = ImagePipeline.resize(image, Math.max(1, (int)(Math.max(image.getWidth(), image.getHeight()) * 0.85)));
             png = ImagePipeline.png(image);
         }
-        return new Loaded(image, png, path.getFileName().toString());
+        return new Loaded(image, png, name);
     }
 }

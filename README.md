@@ -12,6 +12,7 @@ Permitir que los jugadores personalicen sus construcciones con fotografías, ilu
 - Vista previa antes de generar el cuadro.
 - Ancho y alto independientes de **1 a 16 bloques** por lado.
 - Zoom, desplazamiento y recorte para ajustar el encuadre.
+- Giro de la imagen 90° a la derecha con cada clic, aplicado también al cuadro generado.
 - Opción de conservar la proporción o estirar la imagen.
 - Nombre opcional visible en el inventario y al seleccionar el objeto en la barra rápida. Los cuadros colocados no muestran etiquetas flotantes.
 - Miniaturas en el inventario y catálogo en la pestaña creativa.
@@ -21,7 +22,9 @@ Permitir que los jugadores personalicen sus construcciones con fotografías, ilu
 
 ## Descargar
 
-El enlace de descarga directa se añadirá cuando se publique **`custompictureframes-2.0.0.jar`** en GitHub Releases.
+Las versiones publicadas estarán disponibles en [GitHub Releases](https://github.com/BlackWolfJM/custompictureframes/releases).
+
+Descarga el archivo **`custompictureframes-2.0.0.jar`** adjunto a la versión. Si aún no hay una versión publicada, puedes compilar el proyecto siguiendo las instrucciones de este README.
 
 ## Requisitos e instalación
 
@@ -40,7 +43,7 @@ En multijugador, el servidor y cada cliente deben tener el mod y Fabric API inst
 
 1. Pulsa **K**, configurable en Controles, o usa el **Editor de cuadros**. Está disponible en la pestaña creativa y se fabrica con ocho palos alrededor de un papel.
 2. Pulsa **Seleccionar imagen** y elige tu archivo.
-3. Introduce un nombre opcional, ajusta ancho y alto, y configura el encuadre con el zoom y el arrastre.
+3. Introduce un nombre opcional, ajusta ancho y alto, y configura el encuadre con el zoom y el arrastre. Usa **90°** para girar la imagen hacia la derecha.
 4. Pulsa **Generar cuadro** para recibir el objeto. Si el inventario está lleno, aparecerá a los pies del jugador.
 5. Usa el objeto sobre una pared sólida con espacio libre del tamaño elegido.
 

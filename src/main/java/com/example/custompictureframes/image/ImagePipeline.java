@@ -35,6 +35,16 @@ public final class ImagePipeline {
         if (!ImageIO.write(image, "PNG", out)) throw new IOException("PNG encoder unavailable");
         return out.toByteArray();
     }
+    public static BufferedImage rotateClockwise(BufferedImage source) {
+        int w = source.getWidth(), h = source.getHeight();
+        BufferedImage rotated = new BufferedImage(h, w, BufferedImage.TYPE_INT_ARGB);
+        int[] row = new int[w];
+        for (int y = 0; y < h; y++) {
+            source.getRGB(0, y, w, 1, row, 0, w);
+            rotated.setRGB(h - 1 - y, 0, 1, w, row, 0, 1);
+        }
+        return rotated;
+    }
     public static Crop crop(int w, int h, PaintingSpec s) {
         double cw, ch;
         if (s.stretch()) { cw = w / s.zoom(); ch = h / s.zoom(); }

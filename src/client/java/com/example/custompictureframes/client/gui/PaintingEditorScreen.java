@@ -6,6 +6,7 @@ import com.example.custompictureframes.image.ImagePipeline;
 import com.example.custompictureframes.model.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.texture.*;
 import net.minecraft.text.Text;
@@ -22,7 +23,7 @@ public final class PaintingEditorScreen extends Screen {
     private long changedAt;
     private Identifier preview;
     private int texW, texH, viewX, viewY, viewW, viewH;
-    private ButtonWidget generate, choose, ratio;
+    private ButtonWidget generate, choose, ratio, rotate;
     private SliderWidget zoomSlider;
     private TextFieldWidget nameField;
     private String paintingName = "";
@@ -51,7 +52,9 @@ public final class PaintingEditorScreen extends Screen {
             @Override protected void applyValue() { zoom = 1+value*7; updateMessage(); changed(); }
         });
         ratio = button(modeLabel(), 16, 152, 150, b -> { stretch = !stretch; b.setMessage(modeLabel()); changed(); });
-        button(Text.translatable("painting.reset"), 16, 180, 150, b -> { zoom=1; panX=panY=0; stretch=false; changed(); clearAndInit(); });
+        button(Text.translatable("painting.reset"), 16, 180, 114, b -> { zoom=1; panX=panY=0; stretch=false; changed(); clearAndInit(); });
+        rotate = button(Text.literal("90°"), 134, 180, 32, b -> rotate());
+        rotate.setTooltip(Tooltip.of(Text.translatable("painting.rotate")));
         button(Text.translatable("gui.cancel"), 16, height-28, 80, b -> close());
         generate = button(Text.translatable("painting.generate"), Math.max(180, width-176), height-28, 160, b -> generate());
         updateButtons();
@@ -60,6 +63,29 @@ public final class PaintingEditorScreen extends Screen {
     private void updateButtons() {
         if (generate != null) generate.active = source != null && !loading && !ClientNetworking.busy();
         if (choose != null) choose.active = !loading && !ClientNetworking.busy();
+        if (rotate != null) rotate.active = source != null && !loading && !ClientNetworking.busy();
+    }
+    private void rotate() {
+        if (source == null || loading || ClientNetworking.busy()) return;
+        var input = source;
+        loading = true; dragging = false; changed(); updateButtons();
+        status = Text.translatable("painting.rotating");
+        WORKER.execute(() -> {
+            try {
+                var rotated = LocalImageLoader.rotateClockwise(input);
+                client.execute(() -> {
+                    if (closed) return;
+                    source = rotated; loading = false; panX = panY = 0; changed();
+                    status = Text.literal(rotated.name() + " · " + rotated.image().getWidth() + "×" + rotated.image().getHeight());
+                    updateButtons();
+                });
+            } catch (Exception | OutOfMemoryError e) {
+                client.execute(() -> {
+                    if (closed) return;
+                    loading = false; status = Text.translatable("painting.rotate_error"); updateButtons();
+                });
+            }
+        });
     }
     private void select() {
         loading = true; updateButtons(); status = Text.translatable("painting.selecting");
@@ -83,7 +109,7 @@ public final class PaintingEditorScreen extends Screen {
         });
     }
     private void generate() {
-        if (source == null || ClientNetworking.busy()) return;
+        if (source == null || loading || ClientNetworking.busy()) return;
         status = Text.translatable("painting.sending");
         ClientNetworking.generate(source.png(), spec(), paintingName, error -> {
             if (!closed) { status = error.isEmpty() ? Text.translatable("painting.created") : Text.literal(error); updateButtons(); }
@@ -92,7 +118,7 @@ public final class PaintingEditorScreen extends Screen {
     }
     @Override public void tick() {
         updateButtons();
-        if (closed || source == null || processing || renderedRevision == revision || System.currentTimeMillis()-changedAt < 70) return;
+        if (closed || source == null || loading || processing || renderedRevision == revision || System.currentTimeMillis()-changedAt < 70) return;
         processing = true; int token = revision; var input = source.image(); var settings = spec();
         WORKER.execute(() -> {
             try {

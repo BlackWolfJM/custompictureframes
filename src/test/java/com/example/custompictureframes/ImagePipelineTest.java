@@ -5,6 +5,36 @@ import org.junit.jupiter.api.Test;
 import java.awt.image.BufferedImage;
 import static org.junit.jupiter.api.Assertions.*;
 class ImagePipelineTest {
+    @Test void clockwiseRotationPreservesEveryPixelAndFourTurnsRestoreOriginal() {
+        var source = new BufferedImage(3, 2, BufferedImage.TYPE_INT_ARGB);
+        int[] pixels = {0xffff0000, 0xff00ff00, 0xff0000ff, 0x80445566, 0x00778899, 0xffffffff};
+        source.setRGB(0, 0, 3, 2, pixels, 0, 3);
+        var rotated = ImagePipeline.rotateClockwise(source);
+        assertEquals(2, rotated.getWidth()); assertEquals(3, rotated.getHeight());
+        assertArrayEquals(new int[]{pixels[3], pixels[0], pixels[4], pixels[1], pixels[5], pixels[2]},
+                rotated.getRGB(0, 0, 2, 3, null, 0, 2));
+        for (int i = 0; i < 3; i++) rotated = ImagePipeline.rotateClockwise(rotated);
+        assertEquals(3, rotated.getWidth()); assertEquals(2, rotated.getHeight());
+        assertArrayEquals(pixels, rotated.getRGB(0, 0, 3, 2, null, 0, 3));
+        assertArrayEquals(pixels, source.getRGB(0, 0, 3, 2, null, 0, 3));
+    }
+    @Test void rotatedUploadMatchesPreviewAndSurvivesServerRendering() throws Exception {
+        var source = new BufferedImage(6, 4, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < 4; y++) for (int x = 0; x < 6; x++)
+            source.setRGB(x, y, 0xff000000 | (x * 40 << 16) | (y * 60 << 8));
+        var loaded = new com.example.custompictureframes.client.image.LocalImageLoader.Loaded(
+                source, ImagePipeline.png(source), "landscape.png");
+        var rotated = com.example.custompictureframes.client.image.LocalImageLoader.rotateClockwise(loaded);
+        assertEquals(loaded.name(), rotated.name());
+        var decoded = ImagePipeline.decode(rotated.png());
+        assertEquals(4, decoded.getWidth()); assertEquals(6, decoded.getHeight());
+        assertEquals(source.getRGB(0, 0), decoded.getRGB(3, 0));
+        var spec = new PaintingSpec(2, 3, 1, 0, 0, false);
+        var preview = ImagePipeline.render(rotated.image(), spec, 768);
+        var server = ImagePipeline.render(decoded, spec, 2048);
+        assertArrayEquals(preview.getRGB(0, 0, 4, 6, null, 0, 4), server.getRGB(0, 0, 4, 6, null, 0, 4));
+        assertNotEquals(ImagePipeline.hash(loaded.png()), ImagePipeline.hash(rotated.png()));
+    }
     @Test void cropFillsFiveByEightWithoutDistortion() {
         var crop=ImagePipeline.crop(1600,900,new PaintingSpec(5,8,1,0,0,false));
         assertEquals(5.0/8,crop.width()/crop.height(),1e-10);
